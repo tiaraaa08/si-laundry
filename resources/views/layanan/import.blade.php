@@ -12,11 +12,11 @@
                 <div class="modal-body">
                     <div class="form-row">
                         <label>Download Format</label>
-                        <a href="{{ asset('template/format_layanan.xlsx') }}"
+                        <a href="{{ asset('template/FormatImportLayanan.xlsx') }}"
                             class="btn btn-sm btn-success">Download</a>
                     </div>
 
-                    <div class="form-row mt-3">
+                    <div class="mt-3 form-row">
                         <label for="file">Import Data</label>
                         <input type="file" class="form-control" id="file" name="file" required>
                     </div>

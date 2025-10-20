@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Layanan;
 use Illuminate\Http\Request;
-use Spatie\SimpleExcel\SimpleExcelReader;
-use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Imports\LayananImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 
 use Exception;
@@ -53,35 +53,28 @@ class LayananController extends Controller
         return redirect()->route('layanan.index')->with('success', 'Layanan berhasil dihapus!');
     }
 
-  public function import(Request $request)
+public function import(Request $request)
 {
     $request->validate([
-        'file' => 'required|mimes:xlsx,xls,csv',
+        'file' => 'required|mimes:xlsx,xls',
     ]);
 
-    $filePath = $request->file('file')->store('temp');
-    $fullPath = storage_path('app/' . $filePath);
-
-    Log::info('📂 File import path:', ['path' => $fullPath]);
-
     try {
-        $rows = SimpleExcelReader::create($fullPath)->getRows();
+        $path = $request->file('file')->store('temp');
+        $fullPath = storage_path('app/' . $path);
 
-        foreach ($rows as $row) {
-            Log::info('🧾 Row data:', $row);
+        Log::info('📂 File import path:', ['path' => $fullPath, 'exists' => file_exists($fullPath)]);
 
-            Layanan::create([
-                'nama_layanan' => $row['Nama Layanan'] ?? '',
-                'deskripsi' => $row['Deskripsi Layanan'] ?? '',
-                'harga' => (int) filter_var($row['Hrga (per KG)'] ?? 0, FILTER_SANITIZE_NUMBER_INT),
-            ]);
+        if (!file_exists($fullPath)) {
+            throw new \Exception("File tidak ditemukan di path: {$fullPath}");
         }
 
-        return back()->with('success', 'Data berhasil diimport!');
+        Excel::import(new LayananImport, $fullPath);
+
+        return back()->with('success', 'Data layanan berhasil diimport!');
     } catch (\Exception $e) {
         Log::error('❌ Error import:', ['message' => $e->getMessage()]);
         return back()->with('error', 'Gagal import: ' . $e->getMessage());
     }
 }
-
 }
