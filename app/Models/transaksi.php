@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class transaksi extends Model
 {
-   protected $table = 'transaksi';
+    protected $table = 'transaksi';
     protected $guarded = [];
     // $timestamps = false;
-     public $timestamps = false;
+    public $timestamps = false;
 
-      public function layanan()
+    public function layanan()
     {
-        return $this->belongsTo(Layanan::class, 'id');
+        return $this->belongsTo(Layanan::class, 'id_layanan', 'id');
     }
 }

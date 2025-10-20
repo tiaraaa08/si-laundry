@@ -5,13 +5,24 @@
         <h1 class="h3 mb-0 text-gray-800">Layanan</h1>
         <button type="button" data-toggle="modal" data-target="#exampleModal"
             class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-            tambah
+            <i class="fa-duotone fa-solid fa-plus"></i> tambah
         </button>
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Pesanan Terbaru</h6>
+        <div class="card-header py-3 justify-content-between d-flex">
+            <h6 class="m-0 font-weight-bold text-primary">Layanan Terbaru
+            </h6>
+            <div>
+                <button type="button" data-toggle="modal" data-target="#exportLayanan"
+                    class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm">
+                  <i class="fa-duotone fa-solid fa-download"></i>Export
+                </button>
+                <button type="button" data-toggle="modal" data-target="#importLayanan"
+                    class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm ms-4">
+                    <i class="fa-duotone fa-solid fa-file-import"></i> Import
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -44,12 +55,14 @@
                                 <td>
                                     <div class="justify-content-start-2 d-flex">
                                         <button type="button" class="btn btn-sm btn-primary mx-2" data-toggle="modal"
-                                            data-target="#editLayanan-{{$l->id}}">Edit</button>
+                                            data-target="#editLayanan-{{$l->id}}"> <i
+                                                class="fa-duotone fa-solid fa-pen-to-square"></i>Edit</button>
                                         <form action="{{ route('layanan.destroy', $l->id) }}" method="POST"
                                             class="hapus-transaksi-form">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                            <button type="submit" class="btn btn-sm btn-danger"> <i
+                                                    class="fa-duotone fa-solid fa-trash"></i>Hapus</button>
                                         </form>
                                     </div>
                                 </td>
@@ -61,7 +74,8 @@
             </div>
         </div>
     </div>
-
+    @include('layanan.import')
+    {{-- @include('layanan.export') --}}
     @include('layanan.tambah')
 
     <script>

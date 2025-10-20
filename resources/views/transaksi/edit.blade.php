@@ -10,6 +10,7 @@
             </div>
             <form action="{{route('transaksi.update', $t->id)}}" method="POST">
                 @csrf
+                {{-- @method('PUT') --}}
                 <div class="modal-body">
                     <div class="form-row">
                         <div class="form-group col-md-6">
@@ -20,28 +21,32 @@
                         <div class="form-group col-md-6">
                             <label for="inputPassword4">Tanggal</label>
                             <input type="date" class="form-control" id="tanggalInput-edit" name="tanggal_transaksi"
-                                value="{{$t->tanggal_transaksi}}">
+                                value="{{ date('Y-m-d', strtotime($t->tanggal_transaksi)) }}">
                         </div>
                     </div>
-                    <div class="form-row">
+                    <div class="form-row mb-2">
+                        @foreach ($t->layanan_detail as $index => $layanans)
                         <div class="form-group col-md-8">
-                            <label for="inputEmail4">Layanan</label>
-                            <select class="custom-select" id="layananInput-edit" name="id_layanan">
-                                <option selected>Pilih Layanan</option>
-                                @foreach ($layanan as $item)
-                                    <option value="{{ $item->id }}" data-nominal="{{ $item->harga }}"
-                                        {{$t->id == $item->id ? 'selected' : ''}}>
+                            <label for="layananInput-edit">Layanan</label>
+                            <select class="custom-select layananInput-edit" id="layananInput-edit-{{ $index }}" name="id_layanan[]">
+                                <option selected disabled>Pilih Layanan</option>
+                                @foreach ($layanan as $item) {{-- ganti $layananSemua dengan variabel yg isinya semua layanan --}}
+                                    <option value="{{ $item->id }}"
+                                        data-nominal="{{ $item->harga }}"
+                                        {{ $layanans->id_layanan == $item->id ? 'selected' : '' }}>
                                         {{ $item->nama_layanan }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="inputPassword4">Berat(kg)</label>
-                            <input type="number" class="form-control" id="beratInput-edit" name="berat"
-                                value="{{$t->berat}}">
+                            <label for="beratInput-edit-{{ $index }}">Berat (kg)</label>
+                            <input type="number" class="form-control beratInput-edit" id="beratInput-edit-{{ $index }}" name="berat[]"
+                            value="{{ $layanans->berat }}">
                         </div>
+                        @endforeach
                     </div>
+
                     <div class="form-row">
                         <div class="form-group col-md-8">
                             <label for="inputEmail4">Nominal</label>
@@ -70,23 +75,28 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('[id^="editTransaksi-"]').forEach(function (modal) {
-            const layananSelect = document.getElementById('layananInput-edit');
-            const beratInput = document.getElementById('beratInput-edit');
-            const nominalInput = document.getElementById('nominalInput-edit');
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[id^="editTransaksi-"]').forEach(function (modal) {
+        const layananSelects = modal.querySelectorAll('.layananInput-edit');
+        const beratInputs = modal.querySelectorAll('.beratInput-edit');
+        const nominalInput = modal.querySelector('#nominalInput-edit');
 
-            function updateNominal() {
-                const selectedOption = layananSelect.options[layananSelect.selectedIndex];
+        function updateNominal() {
+            let total = 0;
+            layananSelects.forEach((select, i) => {
+                const selectedOption = select.options[select.selectedIndex];
                 const harga = parseFloat(selectedOption.getAttribute('data-nominal')) || 0;
-                const berat = parseFloat(beratInput.value) || 0;
+                const berat = parseFloat(beratInputs[i].value) || 0;
+                total += harga * berat;
+            });
+            nominalInput.value = 'Rp ' + total.toLocaleString('id-ID');
+        }
 
-                const total = harga * berat;
-                nominalInput.value = total;
-            }
-
-            layananSelect.addEventListener('change', updateNominal);
-            beratInput.addEventListener('input', updateNominal);
+        layananSelects.forEach((select, i) => {
+            select.addEventListener('change', updateNominal);
+            beratInputs[i].addEventListener('input', updateNominal);
         });
     });
+});
 </script>
+

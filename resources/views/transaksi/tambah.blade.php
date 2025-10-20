@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <label>Berat(kg)</label>
-                                    <input type="number" class="form-control jumlah-berat" name="berat[]">
+                                    <input type="number" min="0" class="form-control jumlah-berat" name="berat[]">
                                 </div>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
             </select>
         </div>
         <div class="col-md-3">
-            <input type="number" class="form-control jumlah-berat" name="berat[]" placeholder="Berat (kg)">
+            <input type="number" min="0" class="form-control jumlah-berat" name="berat[]" placeholder="Berat (kg)">
         </div>
         <div class="col-md-1">
             <button type="button" class="remove-produk btn btn-danger btn-sm">✖</button>

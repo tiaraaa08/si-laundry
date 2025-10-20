@@ -17,6 +17,7 @@ return new class extends Migration
             $table->dateTime('tanggal_transaksi');
             $table->integer('berat');
             $table->string('nama_pelanggan');
+            $table->string('kode_pesanan');
             $table->enum('keterangan', ['belum', 'diproses', 'selesai', 'sudah diambil'])->default('belum');
             $table->integer('nominal');
         });

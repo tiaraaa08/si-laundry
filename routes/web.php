@@ -23,3 +23,8 @@ Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi
 Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
 Route::post('/transaksi/update/{id}', [TransaksiController::class, 'update'])->name('transaksi.update');
 Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
+
+Route::get('/laporan', [TransaksiController::class, 'laporan'])->name('laporan.index');
+
+Route::post('/layanan/import', [LayananController::class, 'import'])->name('layanan.import');
+Route::get('/layanan/export', [LayananController::class, 'export'])->name('layanan.export');

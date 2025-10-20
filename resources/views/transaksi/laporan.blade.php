@@ -1,28 +1,6 @@
 @extends('master')
 @section('content')
-    {{-- @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-    </div>
-    @endif
-
-    @if(session('success'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: {!! json_encode(session('success'))!!
-        },
-            timer: 2000,
-            showConfirmButton: false
-                            });
-                        });
-    </script>
-    @endif --}}
-
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+ <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Transaksi</h1>
         <button type="button" data-toggle="modal" data-target="#exampleModal"
             class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
@@ -40,17 +18,17 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Pelanggan</th>
-                            <th>Nama Layanan</th>
-                            <th>Tanggal Transaksi</th>
-                            <th>Berat</th>
+                            <th>Tanggal</th>
+                            <th>Nominal</th>
+                            <th>Jumlah Berat</th>
+                            {{-- <th>Berat</th>
                             <th>Nominal</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th>Aksi</th> --}}
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($transaksiGrouped as $t)
+                        {{-- @foreach($transaksiGrouped as $t)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $t->nama_pelanggan }}</td>
@@ -73,49 +51,18 @@
                                 </td>
                             </tr>
                             @include('transaksi.edit')
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>No</th>
-                            <th>Nama Pelanggan</th>
-                            <th>Nama Layanan</th>
-                            <th>Tanggal Transaksi</th>
-                            <th>Berat</th>
+                            <th>Tanggal</th>
                             <th>Nominal</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
+                            <th>Jumlah Berat</th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
     </div>
-    @include('transaksi.tambah')
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const forms = document.querySelectorAll('.hapus-transaksi-form');
-            forms.forEach(form => {
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: "Data transaksi akan dihapus secara permanen!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, hapus!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-        });
-    </script>
 @endsection
