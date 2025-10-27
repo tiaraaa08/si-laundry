@@ -45,7 +45,7 @@
                                 Layanan</button>
                         </div>
                     </div>
-                    <div class="form-row mt-2">
+                    <div class="mt-2 form-row">
                         <label for="inputEmail4">Nominal</label>
                         <input type="text" readonly class="form-control" id="nominalInput" name="nominal">
                     </div>
@@ -137,5 +137,4 @@
             }
         });
     });
-
 </script>

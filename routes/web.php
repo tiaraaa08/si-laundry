@@ -21,6 +21,7 @@ Route::delete('/layanan/{id}', [LayananController::class, 'destroy'])->name('lay
 
 Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
 Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
+Route::get('/struk/{kode_pesanan}', [TransaksiController::class, 'struk'])->name('transaksi.struk');
 Route::post('/transaksi/update/{id}', [TransaksiController::class, 'update'])->name('transaksi.update');
 Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
 

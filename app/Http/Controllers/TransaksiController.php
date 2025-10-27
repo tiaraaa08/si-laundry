@@ -6,6 +6,7 @@ use App\Models\Layanan;
 use App\Models\transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
@@ -38,32 +39,26 @@ class TransaksiController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_pelanggan' => 'required',
-            'id_layanan' => 'required|array',
-            'id_layanan.*' => 'exists:layanan,id',
-            'tanggal_transaksi' => 'required|date',
-            'berat' => 'required|array',
-            'berat.*' => 'numeric|min:0',
-            'nominal' => 'required',
-        ]);
+        $kodePesanan = 'PESN-' . date('dm') . '-' . date('Hi') . '-' . strtoupper(Str::random(3));
+        $nominalBersih = preg_replace('/[^\d]/', '', $request->nominal);
 
-        $nama = $request->nama_pelanggan;
-        $tanggal = $request->tanggal_transaksi;
-        $kodePesanan = 'PESN-' . date('dm') . '-' . date('Hi') . '-' . Str::upper(Str::random(3));
+        foreach ($request->id_layanan as $key => $layanan_id) {
+            $layanan = Layanan::find($layanan_id);
+            $berat = $request->berat[$key];
+            $subtotal = $layanan->harga * $berat;
 
-        foreach ($request->id_layanan as $i => $layananId) {
             Transaksi::create([
-                'nama_pelanggan' => $nama,
                 'kode_pesanan' => $kodePesanan,
-                'tanggal_transaksi' => $tanggal,
-                'id_layanan' => $layananId,
-                'berat' => $request->berat[$i] ?? 0,
-                'nominal' => (int) str_replace(['Rp', '.', ','], '', $request->nominal), // kalau mau simpan total
+                'nama_pelanggan' => $request->nama_pelanggan,
+                'tanggal_transaksi' => $request->tanggal_transaksi,
+                'id_layanan' => $layanan_id,
+                'berat' => $berat,
+                'nominal' => $nominalBersih,
                 'keterangan' => 'belum',
             ]);
         }
-        return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil ditambahkan!');
+
+       return redirect()->route('transaksi.struk', $kodePesanan);
     }
 
     public function update(Request $request, $id)
@@ -115,7 +110,40 @@ class TransaksiController extends Controller
         return redirect()->route('transaksi.index')->with('success', 'transaksi berhasil dihapus!');
     }
 
-    public function laporan(Request $request){
-        return view ('transaksi.laporan');
+public function struk($kodePesanan)
+{
+    // ambil semua transaksi dengan kode yang sama (bisa banyak layanan)
+    $detail = Transaksi::with('layanan')
+        ->where('kode_pesanan', $kodePesanan)
+        ->get();
+
+    if ($detail->isEmpty()) {
+        return redirect()->route('transaksi.index')->with('error', 'Kode pesanan tidak ditemukan.');
+    }
+
+    // ambil satu aja buat header struk (karna nama pelanggan, tanggal, dll sama)
+    $first = $detail->first();
+
+    // siapkan data utama (mirip yang kamu mau pakai di view)
+    $dataUtama = (object) [
+        'kode_pesanan' => $kodePesanan,
+        'nama_pelanggan' => $first->nama_pelanggan,
+        'tanggal_transaksi' => $first->tanggal_transaksi,
+        // nominal di DB disimpan per baris, tapi kamu menyimpan total sama di setiap row;
+        // kalau mau lebih aman, kita hitung total dari detail:
+        'nominal' => $detail->sum(function($row) {
+            // pakai harga dari relasi layanan kalau ada, fallback ke kolom harga di transaksi
+            $harga = optional($row->layanan)->harga ?? ($row->harga ?? 0);
+            return $harga * ($row->berat ?? 0);
+        }),
+    ];
+
+    return view('struk', compact('dataUtama', 'detail'));
+}
+
+
+    public function laporan(Request $request)
+    {
+        return view('transaksi.laporan');
     }
 }
