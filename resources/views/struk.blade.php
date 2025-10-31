@@ -6,94 +6,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Struk Pembayaran - SiLaundry</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
+        @page {
+            size: 80mm auto;
+            margin: 5mm;
+        }
+
         body {
             font-family: 'Courier New', monospace;
-            max-width: 480px;
-            margin: 20px auto;
-            padding: 15px;
-            border: 1px dashed #333;
-            border-radius: 10px;
+            width: 80mm;
+            margin: 0 auto;
+            font-size: 12px;
+            color: #000;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        p {
+        .header {
+            text-align: center;
+            border-bottom: 1px dashed #000;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
             margin: 0;
-            padding: 0;
         }
 
-        .borderless td,
-        .borderless th {
-            border: none !important;
+        .header p {
+            font-size: 11px;
+            margin: 0;
         }
 
-        hr {
-            border-top: 2px dashed #000;
+        .info {
+            margin-bottom: 5px;
+        }
+
+        .info p {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 5px 0;
+        }
+
+        th, td {
+            padding: 2px 0;
+            text-align: left;
+            font-size: 11px;
+        }
+
+        th {
+            border-bottom: 1px dashed #000;
+            font-weight: bold;
+        }
+
+        tfoot td {
+            border-top: 1px dashed #000;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            border-top: 1px dashed #000;
+            margin-top: 5px;
+            padding-top: 5px;
+            font-size: 10px;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                width: 80mm;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="text-center">
-        <h1 class="fw-bold">Si-Laundry</h1>
-        <h6>Jl. Jendral Sudirman No. 86 Beru, Wlingi, Blitar, Jawa Timur</h6>
+    <div class="header">
+        <h1>🧺 Si-Laundry</h1>
+        <p>Jl. Jend. Sudirman No. 86 Beru, Wlingi</p>
+        <p>Blitar - Jawa Timur</p>
     </div>
 
-    <hr>
-
-    <div class="mb-3">
-        <h4 class="mb-3 text-center">STRUK PEMBAYARAN</h4>
-        <p><strong>Tanggal :</strong> {{ $dataUtama->nama_pelanggan }}</p>
-        <p><strong>Kode Pesanan :</strong>
-            {{ $dataUtama->kode_pesanan }}</p>
+    <div class="info">
+        <p><strong>Tanggal :</strong> {{ \Carbon\Carbon::parse($dataUtama->tanggal_transaksi)->format('d/m/Y') }}</p>
+        <p><strong>Kode :</strong> {{ $dataUtama->kode_pesanan }}</p>
         <p><strong>Pelanggan :</strong> {{ $dataUtama->nama_pelanggan }}</p>
     </div>
 
-    <hr>
-
-    <table class="table table-sm borderless">
-        <thead class="border-bottom border-dark">
+    <table>
+        <thead>
             <tr>
-                <th scope="col">No</th>
-                <th scope="col">Layanan</th>
-                <th scope="col">Berat</th>
-                <th scope="col">Harga</th>
-                <th scope="col">Subtotal</th>
+                <th>No</th>
+                <th>Layanan</th>
+                <th class="right">Subtotal</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($detail as $i => $t)
                 @php
-                    $harga = optional($t->layanan)->harga ?? ($t->harga ?? 0);
+                    $harga = optional($t->layanan)->harga ?? 0;
                     $subtotal = $harga * ($t->berat ?? 0);
                 @endphp
                 <tr>
                     <td>{{ $i + 1 }}</td>
-                    <td>{{ optional($t->layanan)->nama_layanan ?? '—' }}</td>
-                    <td>{{ $t->berat ?? 0 }} kg</td>
-                    <td>Rp{{ number_format($harga, 0, ',', '.') }}</td>
-                    <td>Rp{{ number_format($subtotal, 0, ',', '.') }}</td>
+                    <td>
+                        {{ optional($t->layanan)->nama_layanan ?? '—' }} ({{ $t->berat }}kg)
+                    </td>
+                    <td class="right">Rp{{ number_format($subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">Total</td>
+                <td class="right">Rp{{ number_format($dataUtama->nominal, 0, ',', '.') }}</td>
+            </tr>
+        </tfoot>
     </table>
 
-    <hr>
-    <div class="d-flex justify-content-between">
-        <h5>Total :</h5>
-        <h5><strong>Rp{{ number_format($dataUtama->nominal, 0, ',', '.') }}</strong></h5>
+    <div class="footer">
+        <p>✨ Terima Kasih Telah Menggunakan Jasa Kami ✨</p>
+        <p><small>Barang sudah dicuci tidak dapat diklaim lebih dari 24 jam</small></p>
+        <p><small>— SiLaundry —</small></p>
     </div>
-    <hr>
-
-    <p class="mt-3 text-center">✨ Terima Kasih Telah Menggunakan Jasa Kami ✨<br>
-        <small>Barang yang sudah dicuci tidak dapat diklaim lebih dari 24 jam setelah pengambilan</small>
-    </p>
-    <p>
-        Nama = Azzahra Nurayu Mutiara
-    </p>
 
     <script>
         window.onload = function() {
@@ -104,5 +151,4 @@
         };
     </script>
 </body>
-
 </html>
