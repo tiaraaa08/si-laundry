@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Layanan;
 use App\Models\transaksi;
+use App\Models\view_Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -58,7 +59,7 @@ class TransaksiController extends Controller
             ]);
         }
 
-       return redirect()->route('transaksi.struk', $kodePesanan);
+        return redirect()->route('transaksi.struk', $kodePesanan);
     }
 
     public function update(Request $request, $id)
@@ -110,37 +111,56 @@ class TransaksiController extends Controller
         return redirect()->route('transaksi.index')->with('success', 'transaksi berhasil dihapus!');
     }
 
-public function struk($kodePesanan)
-{
-    // ambil semua transaksi dengan kode yang sama (bisa banyak layanan)
-    $detail = Transaksi::with('layanan')
-        ->where('kode_pesanan', $kodePesanan)
-        ->get();
+    // public function struk($kodePesanan)
+    // {
+    //     $detail = Transaksi::with('layanan')
+    //         ->where('kode_pesanan', $kodePesanan)
+    //         ->get();
 
-    if ($detail->isEmpty()) {
-        return redirect()->route('transaksi.index')->with('error', 'Kode pesanan tidak ditemukan.');
+    //     if ($detail->isEmpty()) {
+    //         return redirect()->route('transaksi.index')->with('error', 'Kode pesanan tidak ditemukan.');
+    //     }
+
+    //     $first = $detail->first();
+
+    //     $dataUtama = (object) [
+    //         'kode_pesanan' => $kodePesanan,
+    //         'nama_pelanggan' => $first->nama_pelanggan,
+    //         'tanggal_transaksi' => $first->tanggal_transaksi,
+    //         'nominal' => $detail->sum(function ($row) {
+    //             $harga = optional($row->layanan)->harga ?? ($row->harga ?? 0);
+    //             return $harga * ($row->berat ?? 0);
+    //         }),
+    //     ];
+
+    //     return view('struk', compact('dataUtama', 'detail'));
+    // }
+
+    public function struk($kodePesanan)
+    {
+        // ambil data dari view (model view_Transaksi)
+        $detail = View_Transaksi::where('kode_pesanan', $kodePesanan)->get();
+
+        if ($detail->isEmpty()) {
+            return redirect()->route('transaksi.index')->with('error', 'Kode pesanan tidak ditemukan.');
+        }
+
+        $first = $detail->first();
+
+        // hitung total (harga * berat) dari tiap baris
+        $nominal = $detail->sum(function ($row) {
+            return ($row->harga ?? 0) * ($row->berat ?? 0);
+        });
+
+        $dataUtama = (object)[
+            'kode_pesanan' => $first->kode_pesanan,
+            'nama_pelanggan' => $first->nama_pelanggan,
+            'tanggal_transaksi' => $first->tanggal_transaksi,
+            'nominal' => $nominal,
+        ];
+
+        return view('struk', compact('detail', 'dataUtama'));
     }
-
-    // ambil satu aja buat header struk (karna nama pelanggan, tanggal, dll sama)
-    $first = $detail->first();
-
-    // siapkan data utama (mirip yang kamu mau pakai di view)
-    $dataUtama = (object) [
-        'kode_pesanan' => $kodePesanan,
-        'nama_pelanggan' => $first->nama_pelanggan,
-        'tanggal_transaksi' => $first->tanggal_transaksi,
-        // nominal di DB disimpan per baris, tapi kamu menyimpan total sama di setiap row;
-        // kalau mau lebih aman, kita hitung total dari detail:
-        'nominal' => $detail->sum(function($row) {
-            // pakai harga dari relasi layanan kalau ada, fallback ke kolom harga di transaksi
-            $harga = optional($row->layanan)->harga ?? ($row->harga ?? 0);
-            return $harga * ($row->berat ?? 0);
-        }),
-    ];
-
-    return view('struk', compact('dataUtama', 'detail'));
-}
-
 
     public function laporan(Request $request)
     {

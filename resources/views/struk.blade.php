@@ -1,3 +1,4 @@
+{{--
 <!doctype html>
 <html lang="id">
 
@@ -54,7 +55,8 @@
             margin: 5px 0;
         }
 
-        th, td {
+        th,
+        td {
             padding: 2px 0;
             text-align: left;
             font-size: 11px;
@@ -115,15 +117,86 @@
         </thead>
         <tbody>
             @foreach ($detail as $i => $t)
+            @php
+            $harga = optional($t->layanan)->harga ?? 0;
+            $subtotal = $harga * ($t->berat ?? 0);
+            @endphp
+            <tr>
+                <td>{{ $i + 1 }}</td>
+                <td>
+                    {{ optional($t->layanan)->nama_layanan ?? '—' }} ({{ $t->berat }}kg)
+                </td>
+                <td class="right">Rp{{ number_format($subtotal, 0, ',', '.') }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">Total</td>
+                <td class="right">Rp{{ number_format($dataUtama->nominal, 0, ',', '.') }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="footer">
+        <p>✨ Terima Kasih Telah Menggunakan Jasa Kami ✨</p>
+        <p><small>Barang sudah dicuci tidak dapat diklaim lebih dari 24 jam</small></p>
+        <p><small>— SiLaundry —</small></p>
+    </div>
+
+    <script>
+        window.onload = function () {
+            window.print();
+            window.onafterprint = () => {
+                window.location.href = "{{ route('transaksi.index') }}";
+            };
+        };
+    </script>
+</body>
+
+</html> --}}
+
+
+<!doctype html>
+<html lang="id">
+
+<head>
+    <!-- head sama persis seperti yang kamu punya -->
+</head>
+
+<body>
+    <div class="header">
+        <h1>🧺 Si-Laundry</h1>
+        <p>Jl. Jend. Sudirman No. 86 Beru, Wlingi</p>
+        <p>Blitar - Jawa Timur</p>
+    </div>
+
+    <div class="info">
+        <p><strong>Tanggal :</strong> {{ \Carbon\Carbon::parse($dataUtama->tanggal_transaksi)->format('d/m/Y') }}</p>
+        <p><strong>Kode :</strong> {{ $dataUtama->kode_pesanan }}</p>
+        <p><strong>Pelanggan :</strong> {{ $dataUtama->nama_pelanggan }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Layanan</th>
+                <th class="right">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($detail as $item)
                 @php
-                    $harga = optional($t->layanan)->harga ?? 0;
-                    $subtotal = $harga * ($t->berat ?? 0);
+                    // karena detail berasal dari view SQL, kolom langsung ada di $item
+                    $namaLayanan = $item->nama_layanan ?? '-';
+                    $harga = $item->harga ?? 0;
+                    $berat = $item->berat ?? 0;
+                    $subtotal = $harga * $berat;
                 @endphp
                 <tr>
-                    <td>{{ $i + 1 }}</td>
-                    <td>
-                        {{ optional($t->layanan)->nama_layanan ?? '—' }} ({{ $t->berat }}kg)
-                    </td>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $namaLayanan }} ({{ $berat }}kg)</td>
                     <td class="right">Rp{{ number_format($subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
@@ -143,7 +216,7 @@
     </div>
 
     <script>
-        window.onload = function() {
+        window.onload = function () {
             window.print();
             window.onafterprint = () => {
                 window.location.href = "{{ route('transaksi.index') }}";
@@ -151,4 +224,6 @@
         };
     </script>
 </body>
+
 </html>
+
