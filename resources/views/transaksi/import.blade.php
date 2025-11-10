@@ -1,18 +1,18 @@
-<div class="modal fade" id="importLayanan" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="importTransaksi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Import Layanan</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Import Transaksi</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('layanan.import') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('transaksi.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="form-row">
                         <label>Download Format</label>
-                        <a href="{{ asset('template/FormatImportLayanan.xlsx') }}"
+                        <a href="{{ asset('template/FormatImportTransaksi.xlsx') }}"
                             class="btn btn-sm btn-success">Download</a>
                     </div>
 

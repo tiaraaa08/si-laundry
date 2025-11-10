@@ -16,8 +16,8 @@
         },
             timer: 2000,
             showConfirmButton: false
-                            });
-                        });
+                                    });
+                                });
     </script>
     @endif --}}
 
@@ -31,8 +31,18 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Pesanan Terbaru</h6>
+        <div class="card-header py-3 justify-content-between d-flex">
+            <h6 class="m-0 font-weight-bold text-primary">Pesanan Terbaru
+            </h6>
+            <div>
+                <a href="{{ route('transaksi.export') }}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm ms-4">
+                    <i class="fa-duotone fa-solid fa-download"></i> Export
+                </a>
+                <button type="button" data-toggle="modal" data-target="#importTransaksi"
+                    class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm ms-4">
+                    <i class="fa-duotone fa-solid fa-file-import"></i> Import
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -60,10 +70,14 @@
                                 <td>Rp{{ number_format($t->nominal, 0, ',', '.') }}</td>
                                 <td>{{ $t->keterangan }}</td>
                                 <td>
+                                    @php
+                                        // dd($t->kode_pesanan)
+                                    @endphp
                                     <div class="justify-content-start-2 d-flex">
+                                        <a href="{{ route('transaksi.struk', $t->kode_pesanan ?? '') }}" type="button" class="btn btn-sm btn-primary mx-2" >Print</a>
                                         <button type="button" class="btn btn-sm btn-primary mx-2" data-toggle="modal"
                                             data-target="#editTransaksi-{{ $loop->iteration }}">Edit</button>
-                                        <form action="{{ route('transaksi.destroy', $t->id ?? '') }}" method="POST"
+                                        <form action="{{ route('transaksi.destroy', $t->id_pesanan ?? '') }}" method="POST"
                                             class="hapus-transaksi-form">
                                             @csrf
                                             @method('DELETE')
@@ -92,7 +106,7 @@
         </div>
     </div>
     @include('transaksi.tambah')
-
+    @include('transaksi.import')
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

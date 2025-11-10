@@ -14,10 +14,9 @@
             <h6 class="m-0 font-weight-bold text-primary">Layanan Terbaru
             </h6>
             <div>
-                <button type="button" data-toggle="modal" data-target="#exportLayanan"
-                    class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm">
-                  <i class="fa-duotone fa-solid fa-download"></i>Export
-                </button>
+               <a href="{{ route('layanan.export') }}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm ms-4">
+                    <i class="fa-duotone fa-solid fa-download"></i> Export
+                </a>
                 <button type="button" data-toggle="modal" data-target="#importLayanan"
                     class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm ms-4">
                     <i class="fa-duotone fa-solid fa-file-import"></i> Import

@@ -21,10 +21,6 @@ class LayananImport implements ToModel, WithStartRow
      */
     public function model(array $row)
     {
-        // $row[0] = No. (abaikan)
-        // $row[1] = Nama Layanan
-        // $row[2] = Deskripsi Layanan
-        // $row[3] = Harga (per KG)
 
         if (!isset($row[1]) || !isset($row[2]) || !isset($row[3])) {
             return null; // skip baris kosong

@@ -9,9 +9,14 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Pesanan Terbaru</h6>
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Pesanan Terbaru</h6>
+        <div class="btn-group">
+            <a href="{{ route('laporan.export') }}" id="exportExcel" class="btn btn-sm btn-success shadow-sm">
+                <i class="fa-solid fa-file-excel"></i> Export
+            </a>
         </div>
+    </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -21,37 +26,17 @@
                             <th>Tanggal</th>
                             <th>Nominal</th>
                             <th>Jumlah Berat</th>
-                            {{-- <th>Berat</th>
-                            <th>Nominal</th>
-                            <th>Status</th>
-                            <th>Aksi</th> --}}
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- @foreach($transaksiGrouped as $t)
+                        @foreach($transaksi as $t)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $t->nama_pelanggan }}</td>
-                                <td>{{ $t->nama_layanan }}</td>
                                 <td>{{ date('Y-m-d', strtotime($t->tanggal_transaksi)) }}</td>
                                 <td>{{ $t->berat }} KG</td>
                                 <td>Rp{{ number_format($t->nominal, 0, ',', '.') }}</td>
-                                <td>{{ $t->keterangan }}</td>
-                                <td>
-                                    <div class="justify-content-start-2 d-flex">
-                                        <button type="button" class="btn btn-sm btn-primary mx-2" data-toggle="modal"
-                                            data-target="#editTransaksi-{{ $loop->iteration }}">Edit</button>
-                                        <form action="{{ route('transaksi.destroy', $t->id ?? '') }}" method="POST"
-                                            class="hapus-transaksi-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                        </form>
-                                    </div>
-                                </td>
                             </tr>
-                            @include('transaksi.edit')
-                        @endforeach --}}
+                        @endforeach
                     </tbody>
                     <tfoot>
                         <tr>

@@ -29,3 +29,7 @@ Route::get('/laporan', [TransaksiController::class, 'laporan'])->name('laporan.i
 
 Route::post('/layanan/import', [LayananController::class, 'import'])->name('layanan.import');
 Route::get('/layanan/export', [LayananController::class, 'export'])->name('layanan.export');
+
+Route::post('/transaksi/import', [TransaksiController::class, 'import'])->name('transaksi.import');
+Route::get('/transaksi/export', [TransaksiController::class, 'export'])->name('transaksi.export');
+Route::get('/transaksi/laporan/export', [TransaksiController::class, 'laporanexport'])->name('laporan.export');

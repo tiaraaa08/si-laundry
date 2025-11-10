@@ -1,4 +1,4 @@
-{{--
+
 <!doctype html>
 <html lang="id">
 
@@ -111,20 +111,22 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Layanan</th>
+                <th>Layanan & Berat</th>
                 <th class="right">Subtotal</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($detail as $i => $t)
+            @foreach ($detail as $item)
             @php
-            $harga = optional($t->layanan)->harga ?? 0;
-            $subtotal = $harga * ($t->berat ?? 0);
-            @endphp
+                    $namaLayanan = $item->nama_layanan ?? '-';
+                    $harga = $item->harga ?? 0;
+                    $berat = $item->berat ?? 0;
+                    $subtotal = $harga * $berat;
+                @endphp
             <tr>
-                <td>{{ $i + 1 }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>
-                    {{ optional($t->layanan)->nama_layanan ?? '—' }} ({{ $t->berat }}kg)
+                    {{ $namaLayanan }} ({{ $berat }}kg)
                 </td>
                 <td class="right">Rp{{ number_format($subtotal, 0, ',', '.') }}</td>
             </tr>
@@ -154,10 +156,10 @@
     </script>
 </body>
 
-</html> --}}
+</html>
 
 
-<!doctype html>
+{{-- <!doctype html>
 <html lang="id">
 
 <head>
@@ -226,4 +228,4 @@
 </body>
 
 </html>
-
+ --}}

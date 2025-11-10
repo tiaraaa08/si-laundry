@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LayananExport;
 use App\Models\Layanan;
 use Illuminate\Http\Request;
 use App\Imports\LayananImport;
@@ -53,28 +54,28 @@ class LayananController extends Controller
         return redirect()->route('layanan.index')->with('success', 'Layanan berhasil dihapus!');
     }
 
-public function import(Request $request)
-{
-    $request->validate([
-        'file' => 'required|mimes:xlsx,xls',
-    ]);
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
 
-    try {
-        $path = $request->file('file')->store('temp');
-        $fullPath = storage_path('app/' . $path);
+        try {
+            Excel::import(new LayananImport, $request->file('file'));
 
-        Log::info('📂 File import path:', ['path' => $fullPath, 'exists' => file_exists($fullPath)]);
+            Log::info('File uploaded', [
+                'original_name' => $request->file('file')->getClientOriginalName(),
+                'temp_path' => $request->file('file')->getRealPath(),
+            ]);
 
-        if (!file_exists($fullPath)) {
-            throw new \Exception("File tidak ditemukan di path: {$fullPath}");
+            return back()->with('success', 'Data layanan berhasil diimport!');
+        } catch (\Exception $e) {
+            Log::error('❌ Error import:', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import: ' . $e->getMessage());
         }
-
-        Excel::import(new LayananImport, $fullPath);
-
-        return back()->with('success', 'Data layanan berhasil diimport!');
-    } catch (\Exception $e) {
-        Log::error('❌ Error import:', ['message' => $e->getMessage()]);
-        return back()->with('error', 'Gagal import: ' . $e->getMessage());
     }
-}
+     public function export()
+    {
+        return Excel::download(new LayananExport, 'Data Layanan.xlsx');
+    }
 }

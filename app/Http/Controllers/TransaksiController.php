@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LaporanTransaksi;
+use App\Exports\TransaksiExport;
+use App\Imports\TransaksiImport;
 use App\Models\Layanan;
 use App\Models\transaksi;
 use App\Models\view_Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
+
 
 class TransaksiController extends Controller
 {
@@ -32,6 +37,7 @@ class TransaksiController extends Controller
                 'berat' => $group->sum('berat'),
                 'nominal' => $group->first()->nominal,
                 'keterangan' => $group->first()->keterangan,
+                'kode_pesanan' => $group->first()->kode_pesanan,
             ];
         });
 
@@ -164,6 +170,38 @@ class TransaksiController extends Controller
 
     public function laporan(Request $request)
     {
-        return view('transaksi.laporan');
+        $transaksi = Transaksi::where('keterangan', 'selesai')->get();
+        // dd($transaksi);
+        return view('transaksi.laporan', compact('transaksi'));
+    }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            Excel::import(new TransaksiImport, $request->file('file'));
+
+            Log::info('File uploaded', [
+                'original_name' => $request->file('file')->getClientOriginalName(),
+                'temp_path' => $request->file('file')->getRealPath(),
+            ]);
+
+            return back()->with('success', 'Data layanan berhasil diimport!');
+        } catch (\Exception $e) {
+            Log::error('❌ Error import:', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import: ' . $e->getMessage());
+        }
+    }
+
+    public function export()
+    {
+        return Excel::download(new TransaksiExport, 'Data Transaksi.xlsx');
+    }
+
+    public function laporanexport()
+    {
+        return Excel::download(new LaporanTransaksi(), 'Laporan Transaksi.xlsx');
     }
 }
