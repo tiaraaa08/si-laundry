@@ -62,10 +62,15 @@ class TransaksiController extends Controller
                 'berat' => $berat,
                 'nominal' => $nominalBersih,
                 'keterangan' => 'belum',
+                'keterangan_pembayaran' => $request->keterangan_pembayaran,
             ]);
         }
-
-        return redirect()->route('transaksi.struk', $kodePesanan);
+        if ($request->keterangan_pembayaran == 'lunas') {
+            return redirect()->route('transaksi.struk', $kodePesanan);
+        } else {
+            return redirect()->route('transaksi.index')
+                ->with('success', 'Transaksi berhasil ditambahkan!');
+        }
     }
 
     public function update(Request $request, $id)

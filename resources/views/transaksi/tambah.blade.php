@@ -13,41 +13,65 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="inputEmail4">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama_pelanggan">
+                            <input type="text" required class="form-control" id="nama" name="nama_pelanggan">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="inputPassword4">Tanggal</label>
-                            <input type="date" class="form-control" id="tanggal" name="tanggal_transaksi">
+                            <input type="date" required class="form-control" id="tanggal" name="tanggal_transaksi">
                         </div>
                     </div>
                     <div class="form-row">
-                        <div id="wrapper-layanan-tambah">
+                        <div id="wrapper-layanan-edit">
                             <div class="mt-2 row produk-row">
-                                <div class="col-md-9">
+                                <div class="col-md-8">
                                     <label class="form-label">Layanan</label>
                                     <select class="custom-select produk-select" name="id_layanan[]" required>
                                         <option value="">Pilih Layanan</option>
                                         @foreach ($layanan as $item)
                                             <option value="{{ $item->id }}" data-harga="{{ $item->harga }}">
-                                                {{ $item->nama_layanan }}
+                                                {{ $item->nama_layanan }} (Rp{{ number_format($item->harga, 0, ',', '.') }})
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-3 form-group">
-                                    <label>Berat(kg)</label>
-                                    <input type="number" min="0" class="form-control jumlah-berat" name="berat[]">
+                                <div class="col-md-4 form-group">
+                                    <label for="berat[]">Berat (kg)</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control jumlah-berat" name="berat[]"
+                                            placeholder="Berat (kg)" aria-label="Berat (kg)" required
+                                            aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="basic-addon2">kg</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-1">
-                            <button type="button" class="btn btn-sm btn-primary" id="tambah-layanan">+ Tambah
-                                Layanan</button>
-                        </div>
                     </div>
-                    <div class="mt-2 form-row">
-                        <label for="inputEmail4">Nominal</label>
-                        <input type="text" readonly class="form-control" id="nominalInput" name="nominal">
+                    <div class="mt-1">
+                        <button type="button" class="btn btn-sm btn-primary" id="tambah-layanan">+ Tambah
+                            Layanan</button>
+                    </div>
+                    <div class="form-row">
+                        <div id="wrapper-layanan-edit">
+                            <div class="mt-2 row produk-row">
+                                <div class="col-md-6">
+                                    <label for="inputEmail4">Nominal</label>
+                                    <input type="text" readonly class="form-control" id="nominalInput" name="nominal">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="">Keterangan Pembayaran</label>
+                                    <div class="input-group">
+                                        <select class="custom-select pembayaran-select" name="keterangan_pembayaran"
+                                            required>
+                                            <option value="">Pilih Keterangan Pembayaran</option>
+                                            <option value="belum bayar">Belum Bayar</option>
+                                            <option value="lunas">Lunas</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -78,7 +102,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        const wrapper = document.getElementById('wrapper-layanan-tambah');
+        const wrapper = document.getElementById('wrapper-layanan-edit');
         const tambahBtn = document.getElementById('tambah-layanan');
         const nominalInput = document.getElementById('nominalInput');
 
@@ -102,25 +126,31 @@
 
             newRow.querySelectorAll('label').forEach(label => label.remove());
 
-            newRow.className = 'row produk-row align-items-end';
+            newRow.className = 'row produk-row align-items-end mb-2';
             newRow.innerHTML = `
-        <div class="col-md-8">
-            <select class="form-control produk-select" name="id_layanan[]" required>
-                <option value="">Pilih Layanan</option>
-                @foreach ($layanan as $item)
-                    <option value="{{ $item->id }}" data-harga="{{ $item->harga }}">
-                        {{ $item->nama_layanan }}
-                    </option>
-                @endforeach
-            </select>
+    <div class="col-md-6">
+        <select class="form-control produk-select" name="id_layanan[]" required>
+            <option value="">Pilih Layanan</option>
+            @foreach ($layanan as $item)
+                <option value="{{ $item->id }}" data-harga="{{ $item->harga }}">
+                    {{ $item->nama_layanan }} (Rp{{ number_format($item->harga, 0, ',', '.') }})
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="number" min="0" class="form-control jumlah-berat"
+                name="berat[]" placeholder="Berat (kg)" required>
+            <span class="input-group-text">kg</span>
         </div>
-        <div class="col-md-3">
-            <input type="number" min="0" class="form-control jumlah-berat" name="berat[]" placeholder="Berat (kg)">
-        </div>
-        <div class="col-md-1">
-            <button type="button" class="remove-produk btn btn-danger btn-sm">✖</button>
-        </div>
-    `;
+    </div>
+
+    <div class="col-md-2 d-flex justify-content-center align-items-end">
+        <button type="button" class="remove-produk btn btn-danger btn-sm">✖</button>
+    </div>
+`;
             wrapper.appendChild(newRow);
         });
 

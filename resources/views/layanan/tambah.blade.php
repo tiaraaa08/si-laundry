@@ -13,16 +13,16 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="inputEmail4">Nama Layanan</label>
-                            <input type="text" class="form-control" name="nama_layanan" id="inputEmail4">
+                            <input type="text" class="form-control" name="nama_layanan" required id="inputEmail4">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="inputPassword4">Harga</label>
-                            <input type="number" name="harga" class="form-control" id="inputPassword4">
+                            <input type="number" name="harga" class="form-control" required id="inputPassword4">
                         </div>
                     </div>
                     <div class="form-row">
                         <label for="inputEmail4">Deskripsi</label>
-                        <input type="text" name="deskripsi" class="form-control" id="inputEmail4">
+                        <input type="text" name="deskripsi" class="form-control" required id="inputEmail4">
                     </div>
                 </div>
                 <div class="modal-footer">

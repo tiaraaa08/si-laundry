@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $pendapatanHariIni = transaksi::whereDate('tanggal_transaksi', Carbon::today())
         ->where('keterangan', 'selesai')
         ->sum('nominal');
-        $belumDiambil = transaksi::where('keterangan', 'belum diambil')->count();
+        $belumDiambil = transaksi::where('keterangan', 'selesai')->count();
         $pesananTerbaru = DB::table('transaksi')
             ->select(
                 'tanggal_transaksi',

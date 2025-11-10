@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('nama_pelanggan');
             $table->string('kode_pesanan');
             $table->enum('keterangan', ['belum', 'diproses', 'selesai', 'sudah diambil'])->default('belum');
+            $table->enum('keterangan_pembayaran', ['belum bayar', 'lunas'])->default('belum bayar');
             $table->integer('nominal');
         });
     }
